@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,13 +12,6 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware('role:admin');
-    }
 
     /**
      * Display a listing of the resource.
@@ -52,7 +46,7 @@ class UserController extends Controller
         $users = $query->orderBy('name')->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Settings/Users/Index', [
+        return Inertia::render('settings/Users/Index', props: [
             'users' => $users,
             'filters' => [
                 'search' => $search,
@@ -73,7 +67,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Settings/Users/Create', [
+        return Inertia::render('settings/Users/Create', [
             'roles' => [
                 'admin' => 'অ্যাডমিন',
                 'accountant' => 'হিসাবরক্ষক',
@@ -122,13 +116,12 @@ class UserController extends Controller
     public function show(User $user)
     {
         // Get activity logs for this user
-        $activityLogs = activity()
-            ->causedBy($user)
-            ->latest()
-            ->limit(20)
-            ->get();
+        $activityLogs = AuditLog::where('user_id', $user->id)
+        ->latest()
+        ->limit(20)
+        ->get();
 
-        return Inertia::render('Settings/Users/Show', [
+        return Inertia::render('settings/Users/Show', [
             'user' => $user,
             'activityLogs' => $activityLogs,
             'roles' => [
@@ -145,7 +138,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return Inertia::render('Settings/Users/Edit', [
+        return Inertia::render('settings/Users/Edit', [
             'user' => $user,
             'roles' => [
                 'admin' => 'অ্যাডমিন',

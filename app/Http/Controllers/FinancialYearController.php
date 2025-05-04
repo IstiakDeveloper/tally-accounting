@@ -11,13 +11,6 @@ use Inertia\Inertia;
 
 class FinancialYearController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware('role:admin,accountant');
-    }
 
     /**
      * Display a listing of the resource.

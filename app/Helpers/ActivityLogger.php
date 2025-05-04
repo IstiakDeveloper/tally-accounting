@@ -1,20 +1,5 @@
 <?php
 
-use App\Models\AuditLog;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-
-if (!function_exists('activity')) {
-    /**
-     * Create a new activity logger instance.
-     *
-     * @return \App\Helpers\ActivityLogger
-     */
-    function activity() {
-        return new \App\Helpers\ActivityLogger();
-    }
-}
-
 namespace App\Helpers;
 
 use App\Models\AuditLog;
@@ -33,7 +18,8 @@ class ActivityLogger
      * @param \App\Models\User|null $user
      * @return $this
      */
-    public function causedBy($user = null) {
+    public function causedBy($user = null)
+    {
         $this->user = $user ?? Auth::user();
 
         return $this;
@@ -45,7 +31,8 @@ class ActivityLogger
      * @param \Illuminate\Database\Eloquent\Model $model
      * @return $this
      */
-    public function performedOn(Model $model) {
+    public function performedOn(Model $model)
+    {
         $this->model = $model;
 
         return $this;
@@ -57,7 +44,8 @@ class ActivityLogger
      * @param array $properties
      * @return $this
      */
-    public function withProperties(array $properties = []) {
+    public function withProperties(array $properties = [])
+    {
         $this->properties = $properties;
 
         return $this;
@@ -69,7 +57,8 @@ class ActivityLogger
      * @param string $action
      * @return \App\Models\AuditLog
      */
-    public function log(string $action) {
+    public function log(string $action)
+    {
         $moduleMap = [
             'App\Models\User' => 'users',
             'App\Models\ChartOfAccount' => 'accounts',
@@ -105,6 +94,9 @@ class ActivityLogger
         $log->ip_address = request()->ip();
         $log->user_agent = request()->userAgent();
         $log->action = $action;
+
+        // ✅ Set description based on action
+        $log->description = $action;
 
         if ($this->model) {
             $modelClass = get_class($this->model);
