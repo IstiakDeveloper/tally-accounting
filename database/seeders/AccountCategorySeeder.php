@@ -16,31 +16,31 @@ class AccountCategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'সম্পদ (Assets)',
+                'name' => 'Assets',
                 'type' => 'Asset',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'দায় (Liabilities)',
+                'name' => 'Liabilities',
                 'type' => 'Liability',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'মালিকানা (Equity)',
+                'name' => 'Equity',
                 'type' => 'Equity',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'আয় (Revenue)',
+                'name' => 'Revenue',
                 'type' => 'Revenue',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'ব্যয় (Expense)',
+                'name' => 'Expense',
                 'type' => 'Expense',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
