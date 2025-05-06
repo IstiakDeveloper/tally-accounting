@@ -269,7 +269,7 @@ export default function Dashboard({
                         </div>
                         <div className="bg-gray-50 px-5 py-3">
                             <div className="text-sm">
-                                <Link href={route('settings.users.index')} className="font-medium text-blue-600 hover:text-blue-900">
+                                <Link href={route('admin.users.index')} className="font-medium text-blue-600 hover:text-blue-900">
                                     Manage Users
                                 </Link>
                             </div>

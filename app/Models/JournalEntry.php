@@ -19,6 +19,7 @@ class JournalEntry extends Model
     protected $fillable = [
         'reference_number',
         'financial_year_id',
+        'business_id',
         'entry_date',
         'narration',
         'status',
@@ -130,5 +131,10 @@ class JournalEntry extends Model
     public function scopeCancelled($query)
     {
         return $query->where('status', 'cancelled');
+    }
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class);
     }
 }

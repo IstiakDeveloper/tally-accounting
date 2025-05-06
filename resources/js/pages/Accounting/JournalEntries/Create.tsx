@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ChartOfAccount, FinancialYear } from '@/types';
+import BusinessSelector from '@/components/BusinessSelector';
 
 interface JournalItem {
     id?: number;
@@ -27,19 +28,24 @@ interface JournalEntriesCreateProps {
     accounts: ChartOfAccount[];
     referenceNumber: string;
     today: string;
+    businesses: any[];
+    activeBusiness: any;
 }
 
 export default function JournalEntriesCreate({
     financialYear,
     accounts,
     referenceNumber,
-    today
+    today,
+    businesses,
+    activeBusiness
 }: JournalEntriesCreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         reference_number: referenceNumber,
         financial_year_id: financialYear.id.toString(),
         entry_date: today,
         narration: '',
+        business_id: activeBusiness?.id || '', // এই লাইনটি যোগ করুন
         items: [
             { account_id: '', type: 'debit', amount: '', description: '' },
             { account_id: '', type: 'credit', amount: '', description: '' }
@@ -131,6 +137,8 @@ export default function JournalEntriesCreate({
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back to Journal Entries
                 </Link>
+
+                <BusinessSelector businesses={businesses} activeBusiness={activeBusiness} />
             </div>
 
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -251,6 +259,15 @@ export default function JournalEntriesCreate({
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50">
                                             <tr>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Account
+                                                </th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Type
+                                                </th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Amount
+                                                </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Description
                                                 </th>

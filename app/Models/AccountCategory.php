@@ -17,6 +17,7 @@ class AccountCategory extends Model
     protected $fillable = [
         'name',
         'type',
+        'business_id',
     ];
 
     /**
@@ -74,4 +75,11 @@ class AccountCategory extends Model
     {
         return self::where('type', 'Expense')->get();
     }
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class);
+    }
+
+
 }

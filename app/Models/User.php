@@ -82,4 +82,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(AuditLog::class);
     }
+
+    public function businesses()
+    {
+        return $this->belongsToMany(Business::class)
+            ->withPivot('role', 'is_active')
+            ->withTimestamps();
+    }
+
+    public function getActiveBusiness()
+    {
+        return Business::find(session('active_business_id'));
+    }
 }

@@ -15,18 +15,21 @@ class AccountCategoryController extends Controller
      */
     public function index()
     {
-        $categories = AccountCategory::with('accounts')->get();
+        $categories = AccountCategory::where('business_id', session('active_business_id'))
+            ->with('accounts')
+            ->get();
 
         return Inertia::render('Accounting/AccountCategories/Index', [
             'categories' => $categories,
             'typeLabels' => [
-                'Asset' => 'সম্পদ',
-                'Liability' => 'দায়',
-                'Equity' => 'মালিকানা',
-                'Revenue' => 'আয়',
-                'Expense' => 'ব্যয়',
+                'Asset' => 'Asset',
+                'Liability' => 'Liability',
+                'Equity' => 'Equity',
+                'Revenue' => 'Revenue',
+                'Expense' => 'Expense',
             ],
         ]);
+
     }
 
     /**
@@ -34,14 +37,19 @@ class AccountCategoryController extends Controller
      */
     public function create()
     {
+        $activeBusiness = Auth::user()->businesses()->find(session('active_business_id'));
+        $businesses = Auth::user()->businesses;
+
         return Inertia::render('Accounting/AccountCategories/Create', [
             'types' => [
-                'Asset' => 'সম্পদ',
-                'Liability' => 'দায়',
-                'Equity' => 'মালিকানা',
-                'Revenue' => 'আয়',
-                'Expense' => 'ব্যয়',
+                'Asset' => 'Asset',
+                'Liability' => 'Liability',
+                'Equity' => 'Equity',
+                'Revenue' => 'Revenue',
+                'Expense' => 'Expense',
             ],
+            'businesses' => $businesses,
+            'activeBusiness' => $activeBusiness,
         ]);
     }
 
@@ -53,7 +61,19 @@ class AccountCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:Asset,Liability,Equity,Revenue,Expense',
+            'business_id' => 'required|exists:businesses,id',
         ]);
+
+        $businessId = session('active_business_id');
+
+        // Check if business_id exists
+        if (!$businessId) {
+            return redirect()->back()->with('error', 'No active business selected. Please select a business first.');
+        }
+
+        // Add business_id to the validated data
+        $validated['business_id'] = $businessId;
+        $validated['created_by'] = Auth::id();
 
         $category = AccountCategory::create($validated);
 
@@ -68,7 +88,7 @@ class AccountCategoryController extends Controller
             ->log('created');
 
         return redirect()->route('account-categories.index')
-            ->with('success', 'অ্যাকাউন্ট ক্যাটাগরি সফলভাবে তৈরি করা হয়েছে।');
+            ->with('success', 'Account category created successfully.');
     }
 
     /**
@@ -79,11 +99,11 @@ class AccountCategoryController extends Controller
         return Inertia::render('Accounting/AccountCategories/Edit', [
             'category' => $accountCategory,
             'types' => [
-                'Asset' => 'সম্পদ',
-                'Liability' => 'দায়',
-                'Equity' => 'মালিকানা',
-                'Revenue' => 'আয়',
-                'Expense' => 'ব্যয়',
+                'Asset' => 'Asset',
+                'Liability' => 'Liability',
+                'Equity' => 'Equity',
+                'Revenue' => 'Revenue',
+                'Expense' => 'Expense',
             ],
         ]);
     }

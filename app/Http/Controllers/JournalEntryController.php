@@ -26,8 +26,8 @@ class JournalEntryController extends Controller
         $endDate = $request->input('end_date');
 
         // Query journal entries with filters
-        $query = JournalEntry::with(['financialYear', 'createdBy', 'items.account']);
-
+        $query = JournalEntry::with(['financialYear', 'createdBy', 'items.account'])
+            ->where('business_id', session('active_business_id'));
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('reference_number', 'like', "%{$search}%")
@@ -68,34 +68,48 @@ class JournalEntryController extends Controller
      */
     public function create()
     {
-        // Get active financial year
-        $financialYear = FinancialYear::getActive();
+        // Get active financial year for the current business
+        $financialYear = FinancialYear::where('business_id', session('active_business_id'))
+            ->where('is_active', true)
+            ->first();
 
         if (!$financialYear) {
             return redirect()->route('financial-years.index')
                 ->with('error', 'অনুগ্রহ করে প্রথমে একটি সক্রিয় অর্থ বছর সেট করুন।');
         }
 
-        // Get all accounts for dropdown
+        // Get accounts only for current business
         $accounts = ChartOfAccount::where('is_active', true)
+            ->where('business_id', session('active_business_id')) // এই লাইনটি যোগ করুন
             ->with('category')
             ->orderBy('account_code')
             ->get();
 
         // Get company settings for reference number prefix
-        $companySettings = \App\Models\CompanySetting::getDefault();
+        $companySettings = \App\Models\CompanySetting::where('business_id', session('active_business_id'))
+            ->first() ?? \App\Models\CompanySetting::getDefault();
+
         $prefix = $companySettings->journal_prefix;
 
         // Generate a new reference number
-        $lastEntry = JournalEntry::orderBy('id', 'desc')->first();
+        $lastEntry = JournalEntry::where('business_id', session('active_business_id'))
+            ->orderBy('id', 'desc')
+            ->first();
+
         $nextNumber = $lastEntry ? intval(substr($lastEntry->reference_number, strlen($prefix))) + 1 : 1;
         $referenceNumber = $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+        // Get businesses for business selector
+        $activeBusiness = Auth::user()->businesses()->find(session('active_business_id'));
+        $businesses = Auth::user()->businesses;
 
         return Inertia::render('Accounting/JournalEntries/Create', [
             'financialYear' => $financialYear,
             'accounts' => $accounts,
             'referenceNumber' => $referenceNumber,
             'today' => Carbon::today()->format('Y-m-d'),
+            'businesses' => $businesses,
+            'activeBusiness' => $activeBusiness,
         ]);
     }
 
@@ -114,7 +128,9 @@ class JournalEntryController extends Controller
             'items.*.type' => 'required|in:debit,credit',
             'items.*.amount' => 'required|numeric|min:0.01',
             'items.*.description' => 'nullable|string',
+            'business_id' => 'required|exists:businesses,id',
         ]);
+
 
         // Check if debit equals credit
         $debitTotal = 0;
@@ -138,6 +154,7 @@ class JournalEntryController extends Controller
         try {
             // Create journal entry
             $journalEntry = JournalEntry::create([
+                'business_id' => $validated['business_id'],
                 'reference_number' => $validated['reference_number'],
                 'financial_year_id' => $validated['financial_year_id'],
                 'entry_date' => $validated['entry_date'],

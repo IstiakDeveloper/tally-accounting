@@ -19,6 +19,7 @@ class FinancialYear extends Model
         'start_date',
         'end_date',
         'is_active',
+        'business_id',
     ];
 
     /**
@@ -64,13 +65,6 @@ class FinancialYear extends Model
         }
     }
 
-    /**
-     * Get active financial year.
-     */
-    public static function getActive()
-    {
-        return self::where('is_active', true)->first();
-    }
 
     /**
      * Scope a query to only include active financial year.
@@ -99,4 +93,18 @@ class FinancialYear extends Model
 
         return $start->format('Y') . '-' . $end->format('Y');
     }
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class);
+    }
+
+    // getActive স্ট্যাটিক মেথড পরিবর্তন করুন
+    public static function getActive()
+    {
+        return self::where('business_id', session('active_business_id'))
+            ->where('is_active', true)
+            ->first();
+    }
+
 }

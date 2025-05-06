@@ -22,13 +22,14 @@ class ChartOfAccountController extends Controller
         $status = $request->input('status');
 
         // Query accounts with filters
-        $query = ChartOfAccount::with('category', 'createdBy');
+        $query = ChartOfAccount::with('category', 'createdBy')
+            ->where('business_id', session('active_business_id'));
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('account_code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('account_code', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -85,6 +86,7 @@ class ChartOfAccountController extends Controller
             'is_active' => 'boolean',
         ]);
 
+        $validated['business_id'] = session('active_business_id');
         $validated['created_by'] = Auth::id();
 
         $account = ChartOfAccount::create($validated);

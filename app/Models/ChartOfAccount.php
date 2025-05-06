@@ -26,6 +26,7 @@ class ChartOfAccount extends Model
         'account_code',
         'name',
         'category_id',
+        'business_id',
         'description',
         'is_active',
         'created_by',
@@ -100,4 +101,18 @@ class ChartOfAccount extends Model
             $q->where('type', $type);
         });
     }
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class);
+    }
+
+
+
+    public function bankAccounts()
+    {
+        return $this->hasMany(BankAccount::class, 'account_id');
+    }
+
+
 }

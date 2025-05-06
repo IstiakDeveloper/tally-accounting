@@ -26,6 +26,7 @@ class BankAccount extends Model
         'contact_person',
         'contact_number',
         'account_id',
+        'business_id',
         'is_active',
     ];
 
@@ -80,4 +81,11 @@ class BankAccount extends Model
     {
         return $query->where('bank_name', 'like', "%{$bankName}%");
     }
+
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class, 'business_id');
+    }
+
 }

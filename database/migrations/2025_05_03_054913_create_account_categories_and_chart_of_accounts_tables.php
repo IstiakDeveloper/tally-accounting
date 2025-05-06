@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('type'); // Asset, Liability, Equity, Revenue, Expense
+            $table->foreignId('business_id')->constrained('businesses')->after('id');
             $table->timestamps();
         });
 
@@ -25,6 +26,7 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('business_id')->constrained('businesses')->after('id');
             $table->timestamps();
         });
     }

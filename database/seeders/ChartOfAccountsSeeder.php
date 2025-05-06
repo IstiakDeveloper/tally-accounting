@@ -13,14 +13,21 @@ class ChartOfAccountsSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get the default business ID
+        $businessId = DB::table('businesses')->first()->id ?? 1;
+
         // Get the user ID for seeding
         $userId = DB::table('users')->where('email', 'admin@example.com')->first()->id ?? 1;
 
         // Asset Accounts
-        $assetCategoryId = DB::table('account_categories')->where('type', 'Asset')->first()->id;
+        $assetCategoryId = DB::table('account_categories')
+            ->where('type', 'Asset')
+            ->where('business_id', $businessId)
+            ->first()->id;
 
         $assetAccounts = [
             [
+                'business_id' => $businessId,
                 'account_code' => '1001',
                 'name' => 'Cash',
                 'category_id' => $assetCategoryId,
@@ -31,6 +38,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '1002',
                 'name' => 'Bank',
                 'category_id' => $assetCategoryId,
@@ -41,6 +49,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '1003',
                 'name' => 'Accounts Receivable',
                 'category_id' => $assetCategoryId,
@@ -51,6 +60,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '1004',
                 'name' => 'Inventory',
                 'category_id' => $assetCategoryId,
@@ -61,6 +71,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '1005',
                 'name' => 'Investments',
                 'category_id' => $assetCategoryId,
@@ -71,6 +82,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '1006',
                 'name' => 'Equipment',
                 'category_id' => $assetCategoryId,
@@ -83,10 +95,14 @@ class ChartOfAccountsSeeder extends Seeder
         ];
 
         // Liability Accounts
-        $liabilityCategoryId = DB::table('account_categories')->where('type', 'Liability')->first()->id;
+        $liabilityCategoryId = DB::table('account_categories')
+            ->where('type', 'Liability')
+            ->where('business_id', $businessId)
+            ->first()->id;
 
         $liabilityAccounts = [
             [
+                'business_id' => $businessId,
                 'account_code' => '2001',
                 'name' => 'Accounts Payable',
                 'category_id' => $liabilityCategoryId,
@@ -97,6 +113,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '2002',
                 'name' => 'Salaries Payable',
                 'category_id' => $liabilityCategoryId,
@@ -107,6 +124,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '2003',
                 'name' => 'Loans',
                 'category_id' => $liabilityCategoryId,
@@ -117,6 +135,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '2004',
                 'name' => 'VAT Payable',
                 'category_id' => $liabilityCategoryId,
@@ -129,10 +148,14 @@ class ChartOfAccountsSeeder extends Seeder
         ];
 
         // Equity Accounts
-        $equityCategoryId = DB::table('account_categories')->where('type', 'Equity')->first()->id;
+        $equityCategoryId = DB::table('account_categories')
+            ->where('type', 'Equity')
+            ->where('business_id', $businessId)
+            ->first()->id;
 
         $equityAccounts = [
             [
+                'business_id' => $businessId,
                 'account_code' => '3001',
                 'name' => 'Capital',
                 'category_id' => $equityCategoryId,
@@ -143,6 +166,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '3002',
                 'name' => 'Retained Earnings',
                 'category_id' => $equityCategoryId,
@@ -155,10 +179,14 @@ class ChartOfAccountsSeeder extends Seeder
         ];
 
         // Revenue Accounts
-        $revenueCategoryId = DB::table('account_categories')->where('type', 'Revenue')->first()->id;
+        $revenueCategoryId = DB::table('account_categories')
+            ->where('type', 'Revenue')
+            ->where('business_id', $businessId)
+            ->first()->id;
 
         $revenueAccounts = [
             [
+                'business_id' => $businessId,
                 'account_code' => '4001',
                 'name' => 'Sales Revenue',
                 'category_id' => $revenueCategoryId,
@@ -169,6 +197,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '4002',
                 'name' => 'Service Revenue',
                 'category_id' => $revenueCategoryId,
@@ -179,6 +208,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '4003',
                 'name' => 'Discount',
                 'category_id' => $revenueCategoryId,
@@ -191,10 +221,14 @@ class ChartOfAccountsSeeder extends Seeder
         ];
 
         // Expense Accounts
-        $expenseCategoryId = DB::table('account_categories')->where('type', 'Expense')->first()->id;
+        $expenseCategoryId = DB::table('account_categories')
+            ->where('type', 'Expense')
+            ->where('business_id', $businessId)
+            ->first()->id;
 
         $expenseAccounts = [
             [
+                'business_id' => $businessId,
                 'account_code' => '5001',
                 'name' => 'Cost of Goods Sold',
                 'category_id' => $expenseCategoryId,
@@ -205,6 +239,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '5002',
                 'name' => 'Salary Expense',
                 'category_id' => $expenseCategoryId,
@@ -215,6 +250,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '5003',
                 'name' => 'Office Rent',
                 'category_id' => $expenseCategoryId,
@@ -225,6 +261,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '5004',
                 'name' => 'Utility Expense',
                 'category_id' => $expenseCategoryId,
@@ -235,6 +272,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '5005',
                 'name' => 'Marketing Expense',
                 'category_id' => $expenseCategoryId,
@@ -245,6 +283,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '5006',
                 'name' => 'Transportation Expense',
                 'category_id' => $expenseCategoryId,
@@ -255,6 +294,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
+                'business_id' => $businessId,
                 'account_code' => '5007',
                 'name' => 'Depreciation Expense',
                 'category_id' => $expenseCategoryId,

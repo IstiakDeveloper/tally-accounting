@@ -17,7 +17,9 @@ class FinancialYearController extends Controller
      */
     public function index()
     {
-        $financialYears = FinancialYear::orderBy('start_date', 'desc')->get();
+        $financialYears = FinancialYear::where('business_id', session('active_business_id'))
+            ->orderBy('start_date', 'desc')
+            ->get();
 
         return Inertia::render('Accounting/FinancialYears/Index', [
             'financialYears' => $financialYears,
@@ -44,15 +46,19 @@ class FinancialYearController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        // Validate that date range doesn't overlap with existing financial years
-        $overlapping = FinancialYear::where(function ($query) use ($validated) {
-            $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']])
-                ->orWhere(function ($q) use ($validated) {
-                    $q->where('start_date', '<=', $validated['start_date'])
-                      ->where('end_date', '>=', $validated['end_date']);
-                });
-        })->exists();
+        // Validate that date range doesn't overlap with existing financial years (business-specific)
+        $overlapping = FinancialYear::where('business_id', session('active_business_id'))
+            ->where(function ($query) use ($validated) {
+                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
+                    ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']])
+                    ->orWhere(function ($q) use ($validated) {
+                        $q->where('start_date', '<=', $validated['start_date'])
+                            ->where('end_date', '>=', $validated['end_date']);
+                    });
+            })->exists();
+
+        // Add business_id to validated data
+        $validated['business_id'] = session('active_business_id');
 
         if ($overlapping) {
             return back()->withErrors(['date_range' => 'নির্বাচিত তারিখ পরিসীমা অন্য অর্থবছরের সাথে ওভারল্যাপ করে।']);
@@ -121,7 +127,7 @@ class FinancialYearController extends Controller
                     ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']])
                     ->orWhere(function ($q) use ($validated) {
                         $q->where('start_date', '<=', $validated['start_date'])
-                          ->where('end_date', '>=', $validated['end_date']);
+                            ->where('end_date', '>=', $validated['end_date']);
                     });
             })->exists();
 
@@ -218,8 +224,9 @@ class FinancialYearController extends Controller
         DB::beginTransaction();
 
         try {
-            // Deactivate all financial years
-            FinancialYear::where('id', '!=', $financialYear->id)
+            // Deactivate all financial years of this business
+            FinancialYear::where('business_id', session('active_business_id'))
+                ->where('id', '!=', $financialYear->id)
                 ->update(['is_active' => false]);
 
             // Activate this financial year

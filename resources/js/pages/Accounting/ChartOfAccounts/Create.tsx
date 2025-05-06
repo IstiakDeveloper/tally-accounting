@@ -3,12 +3,15 @@ import { Head, useForm, Link } from '@inertiajs/react';
 import { ArrowLeft, Save, AlertTriangle, HelpCircle } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { AccountCategory } from '@/types';
+import BusinessSelector from '@/components/BusinessSelector';
 
 interface ChartOfAccountsCreateProps {
   categories: AccountCategory[];
+  businesses: any[];
+  activeBusiness: any;
 }
 
-export default function ChartOfAccountsCreate({ categories }: ChartOfAccountsCreateProps) {
+export default function ChartOfAccountsCreate({ categories, businesses, activeBusiness }: ChartOfAccountsCreateProps) {
   const { data, setData, post, processing, errors } = useForm({
     account_code: '',
     name: '',
@@ -60,6 +63,8 @@ export default function ChartOfAccountsCreate({ categories }: ChartOfAccountsCre
           <ArrowLeft className="h-4 w-4 mr-2" />
           Go Back
         </Link>
+
+        <BusinessSelector businesses={businesses} activeBusiness={activeBusiness} />
       </div>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">

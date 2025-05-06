@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register your role middleware
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'business' => \App\Http\Middleware\BusinessMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
